@@ -35,13 +35,14 @@ func TestError(t *testing.T){
 }
 
 func TestInt64(t *testing.T){
-    cases := map[string]int{
+    cases := map[string]int64{
         ":0\r\n" : 0,
         ":10001\r\n" : 10001,
     }
 
     for k,v := range cases{
         value, _ := core.Decode([]byte(k))
+        // ivalue := value.(int64)
         if v != value {
             t.Fail()
         }
@@ -65,10 +66,11 @@ func TestBulkString(t *testing.T){
 func TestArrayDecode(t *testing.T){
     cases := map[string][]interface{} {
         "*0\r\n" :                                                  {},
-        "*2\r\n$5\r\nhello\r\n$5\r\nworld\r\n" :                    {"hello", "world"},
+        "*2\r\n$5\r\nhello\r\n$5\r\nworld\r\n":                     {"hello", "world"},
         "*3\r\n:1\r\n:2\r\n:3\r\n":                                 {int64(1), int64(2), int64(3)},
         "*5\r\n:1\r\n:2\r\n:3\r\n:4\r\n$5\r\nhello\r\n":            {int64(1), int64(2), int64(3), int64(4), "hello"},
-        "*2\r\n*3:1\r\n:2\r\n:3\r\n*2\r\n+Hello\r\n-World\r\n":     {[]int64{int64(1), int64(2), int64(3)}, []interface{}{"Hello", "World"}},
+        "*2\r\n*3\r\n:1\r\n:2\r\n:3\r\n*2\r\n+Hello\r\n-World\r\n": {[]int64{int64(1), int64(2), int64(3)}, []interface{}{"Hello", "World"}},
+
     }
 
     for k,v := range cases{
@@ -80,8 +82,11 @@ func TestArrayDecode(t *testing.T){
         }
 
         for i := range array {
+            t.Logf("values " + fmt.Sprintf("%v ", v[i]) + fmt.Sprintf("%v", array[i]))
+
             if fmt.Sprintf("%v", v[i]) != fmt.Sprintf("%v", array[i]){
                 t.Logf("Mismatch in values" + fmt.Sprintf("%v", v[i]) + fmt.Sprintf("%v", array[i]))
+                t.Logf("Full array " + fmt.Sprintf("%v ", array))
                 t.Fail()
             }
         }
