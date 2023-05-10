@@ -3,6 +3,7 @@ package core
 import (
 	"errors"
 	"fmt"
+	"log"
 )
 
 // reads the length, typically the first integer of the string
@@ -64,6 +65,7 @@ func readArray(data []byte) (interface{}, int, error) {
     pos += delta
 
     var elems []interface{} = make([]interface{}, count)
+    log.Println(elems...)
     for i := range elems {
         elem, delta, err := DecodeOne(data[pos:])
         if err != nil {
@@ -88,6 +90,7 @@ func readBulkString(data []byte) (string, int, error) {
 }
 
 func DecodeArrayString(data []byte) ([]string, error) {
+    log.Println("Inside Decode Array")
     value, err := Decode(data)
     if err != nil {
         return nil, err
@@ -105,6 +108,7 @@ func DecodeArrayString(data []byte) ([]string, error) {
 
 
 func DecodeOne(data []byte) (interface{}, int, error) {
+    log.Println("Inside DecodeOne")
     if len(data) == 0 {
         return nil, 0, errors.New("no data")
     }
